@@ -1,0 +1,70 @@
+package br.com.dio.desafio.dominio;
+
+import java.util.LinkedHashSet;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.Set;
+
+public class Dev {
+    private String nome;
+    private Set<Conteudo> conteudosInscritos = new LinkedHashSet<>();
+    private Set<Conteudo> conteudosConluidos = new LinkedHashSet<>();
+
+    public void inscreverBootcamp(Bootcamp bootcamp){
+        this.conteudosInscritos.addAll(bootcamp.getConteudos());
+        bootcamp.getDevInscritos().add(this);
+    }
+
+    public void progredir(){
+        Optional<Conteudo> conteudo = this.conteudosInscritos.stream().findFirst();
+        if(conteudo.isPresent()){
+            this.conteudosConluidos.add(conteudo.get());
+            this.conteudosInscritos.remove(conteudo.get());
+        }
+        else {
+            System.err.println("você não está matriculado em nenhum conteúdo!");
+        }
+
+
+    }
+
+    public double calcularTotalXp(){
+        return this.conteudosConluidos.stream().mapToDouble(Conteudo::calcularXp).sum();
+
+    }
+
+    public String getNome() {
+        return nome;
+    }
+
+    public void setNome(String nome) {
+        this.nome = nome;
+    }
+
+    public Set<Conteudo> getConteudoInscrito() {
+        return conteudosInscritos;
+    }
+
+    public void setConteudoInscrito(Set<Conteudo> conteudoInscrito) {
+        this.conteudosInscritos = conteudoInscrito;
+    }
+
+    public Set<Conteudo> getConteudosConluidos() {
+        return conteudosConluidos;
+    }
+
+    public void setConteudosConluidos(Set<Conteudo> conteudosConluidos) {
+        this.conteudosConluidos = conteudosConluidos;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (!(o instanceof Dev dev)) return false;
+        return Objects.equals(getNome(), dev.getNome()) && Objects.equals(getConteudoInscrito(), dev.getConteudoInscrito()) && Objects.equals(getConteudosConluidos(), dev.getConteudosConluidos());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(getNome(), getConteudoInscrito(), getConteudosConluidos());
+    }
+}
